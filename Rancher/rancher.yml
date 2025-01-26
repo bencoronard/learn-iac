@@ -1,0 +1,16 @@
+services:
+  rancher:
+    image: rancher/rancher:latest
+    container_name: rancher
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /opt/rancher:/var/lib/rancher
+      - /etc/rancher/ssl:/etc/rancher/ssl # Optional: For custom SSL certs
+    environment:
+      - CATTLE_BOOTSTRAP_PASSWORD=yourStrongPassword # Set a strong default admin password
+
+volumes:
+  rancher_data:
