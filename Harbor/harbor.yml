@@ -1,0 +1,82 @@
+version: '3.7'
+services:
+  # Core Harbor Service
+  core:
+    image: goharbor/harbor-core:v2.8.1
+    container_name: harbor-core
+    depends_on:
+      - database
+      - redis
+    networks:
+      - harbor
+    environment:
+      - CORE_SECRET=mysecret
+    volumes:
+      - /data/core:/data/core
+      - /data/config:/etc/core
+    restart: always
+
+  # Nginx as a reverse proxy
+  nginx:
+    image: goharbor/nginx-photon:v2.8.1
+    container_name: harbor-nginx
+    depends_on:
+      - core
+    networks:
+      - harbor
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /data/certs:/etc/certs
+      - /data/config/nginx:/etc/nginx
+    restart: always
+
+  # PostgreSQL Database
+  database:
+    image: goharbor/harbor-db:v2.8.1
+    container_name: harbor-database
+    networks:
+      - harbor
+    environment:
+      POSTGRES_PASSWORD: your-db-password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: registry
+    volumes:
+      - /data/database:/var/lib/postgresql/data
+    restart: always
+
+  # Redis for caching
+  redis:
+    image: goharbor/redis-photon:v2.8.1
+    container_name: harbor-redis
+    networks:
+      - harbor
+    restart: always
+
+  # Optional Trivy scanner
+  trivy:
+    image: aquasec/trivy:latest
+    container_name: harbor-trivy
+    depends_on:
+      - core
+    networks:
+      - harbor
+    restart: always
+
+  # Optional Notary service
+  notary:
+    image: goharbor/notary-server-photon:v2.8.1
+    container_name: harbor-notary
+    networks:
+      - harbor
+    restart: always
+
+networks:
+  harbor:
+    driver: bridge
+
+volumes:
+  certs:
+  config:
+  data:
