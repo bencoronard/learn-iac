@@ -1,0 +1,17 @@
+services:
+  jenkins:
+    image: docker.io/jenkins/jenkins:alpine-jdk21
+    restart: unless-stopped
+    security_opt:
+      - label=type:container_runtime_t
+    volumes:
+      - ${HOME}/.mnt/jenkins:/var/jenkins_home:z
+      - /run/user/1000/podman/podman.sock:/var/run/docker.sock:Z
+    networks:
+      - hbnet
+    ports:
+      - '8080:8080'
+
+networks:
+  hbnet:
+    external: true
