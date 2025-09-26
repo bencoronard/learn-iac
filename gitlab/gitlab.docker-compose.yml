@@ -10,14 +10,14 @@ services:
     networks:
       - hbnet
     ports:
-      - '8081:8081'
-      - '8022:22'
+      - '9080:80'
+      - '9022:22'
     environment:
       GITLAB_ROOT_EMAIL: 'admin@hireben.dev'
       GITLAB_ROOT_PASSWORD: 'P@ssw0rd'
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://localhost:8081'
-        gitlab_rails['gitlab_shell_ssh_port'] = 8022
+        external_url 'http://localhost:9080'
+        gitlab_rails['gitlab_shell_ssh_port'] = 9022
         postgresql['shared_buffers'] = '64MB'
         redis['maxmemory'] = '32mb'
         puma['worker_processes'] = 2
