@@ -5,12 +5,15 @@ services:
     security_opt:
       - label=type:container_runtime_t
     volumes:
-      - ${HOME}/.mnt/jenkins:/var/jenkins_home:z
-      - /run/user/1000/podman/podman.sock:/var/run/docker.sock:Z
+      - jenkins_home:/var/jenkins_home
+      - /run/user/1000/podman/podman.sock:/var/run/docker.sock:z
     networks:
       - hbnet
     ports:
       - '8080:8080'
+
+volumes:
+  jenkins_home:
 
 networks:
   hbnet:

@@ -4,9 +4,9 @@ services:
     restart: unless-stopped
     shm_size: 256m
     volumes:
-      - ${HOME}/.mnt/gitlab/data:/var/opt/gitlab:z
-      - ${HOME}/.mnt/gitlab/config:/etc/gitlab:z
-      - ${HOME}/.mnt/gitlab/log:/var/log/gitlab:z
+      - gitlab_data:/var/opt/gitlab
+      - gitlab_config:/etc/gitlab
+      - gitlab_log:/var/log/gitlab
     networks:
       - hbnet
     ports:
@@ -38,6 +38,11 @@ services:
         postgres_exporter['enable'] = false
         prometheus['enable'] = false
         redis_exporter['enable'] = false
+
+volumes:
+  gitlab_data:
+  gitlab_config:
+  gitlab_log:
 
 networks:
   hbnet:
