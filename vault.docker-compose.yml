@@ -1,0 +1,21 @@
+services:
+  gitlab:
+    image: docker.io/hashicorp/vault:latest
+    restart: unless-stopped
+    volumes:
+      - vault_data:/vault/data
+      - vault_log:/vault/logs
+    networks:
+      - hbnet
+    ports:
+      - '8200:8200'
+    environment:
+      VAULT_ADDR: "http://localhost:8200"
+
+volumes:
+  vault_data:
+  vault_log:
+
+networks:
+  hbnet:
+    external: true
