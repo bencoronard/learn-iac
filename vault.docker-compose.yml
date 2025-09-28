@@ -1,5 +1,5 @@
 services:
-  gitlab:
+  vault:
     image: docker.io/hashicorp/vault:latest
     restart: unless-stopped
     volumes:
