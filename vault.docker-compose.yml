@@ -2,19 +2,39 @@ services:
   vault:
     image: docker.io/hashicorp/vault:latest
     restart: unless-stopped
+    cap_add:
+      - IPC_LOCK
     volumes:
-      - vault_data:/vault/data
       - vault_log:/vault/logs
+      - vault_file:/vault/file
     networks:
       - hbnet
     ports:
       - '8200:8200'
     environment:
-      VAULT_ADDR: "http://localhost:8200"
+      VAULT_LOCAL_CONFIG: |
+        {
+          "storage": {
+            "file": {
+              "path": "/vault/file"
+            }
+          },
+          "listener": [
+            {
+              "tcp": {
+                "address": "localhost:8200",
+                "tls_disable": true
+              }
+            }
+          ],
+          "default_lease_ttl": "168h",
+          "max_lease_ttl": "720h",
+          "ui": true
+        }
 
 volumes:
-  vault_data:
   vault_log:
+  vault_file:
 
 networks:
   hbnet:
