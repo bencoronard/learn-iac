@@ -2,17 +2,19 @@ services:
   postgres:
     image: docker.io/library/postgres:alpine
     restart: unless-stopped
+    security_opt:
+      - label=type:container_runtime_t
     shm_size: 256m
     volumes:
       - pg_data:/var/lib/postgresql
+      - ./config/postgres:/docker-entrypoint-initdb.d:z
     networks:
       - hbnet
     ports:
       - '5432:5432'
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: P@ssw0rd
-      POSTGRES_USER: admin
-      POSTGRES_DB: hb-db
 
 volumes:
   pg_data:
