@@ -6,7 +6,7 @@ services:
       - label=type:container_runtime_t
     volumes:
       - jenkins_home:/var/jenkins_home
-      - /run/user/1000/podman/podman.sock:/var/run/docker.sock:z
+      - ${XDG_RUNTIME_DIR}/podman/podman.sock:/var/run/docker.sock:z
     networks:
       - hbnet
     ports:
