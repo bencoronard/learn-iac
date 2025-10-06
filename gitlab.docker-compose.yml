@@ -13,8 +13,8 @@ services:
       - '9080:9080'
       - '9022:9022'
     environment:
-      GITLAB_ROOT_EMAIL: 'admin@hireben.dev'
-      GITLAB_ROOT_PASSWORD: 'P@ssw0rd'
+      GITLAB_ROOT_EMAIL: admin@hireben.dev
+      GITLAB_ROOT_PASSWORD: P@ssw0rd
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://localhost:9080'
         gitlab_rails['gitlab_shell_ssh_port'] = 9022
