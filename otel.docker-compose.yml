@@ -1,0 +1,18 @@
+services:
+  otel:
+    image: docker.io/otel/opentelemetry-collector:latest
+    restart: unless-stopped
+    security_opt:
+      - label=type:container_runtime_t
+    volumes:
+      - ./config/otel:/etc/otelcol:z,ro
+    networks:
+      - hbnet
+    ports:
+      - '4317:4317'
+      - '4318:4318'
+    command: ['--config=/etc/otelcol/config.yaml']
+
+networks:
+  hbnet:
+    external: true
