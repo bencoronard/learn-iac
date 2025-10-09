@@ -66,11 +66,20 @@ exporters:
   logging:
     loglevel: debug
   otlp:
-    endpoint: http://jaeger/otlp
+    endpoint: otelcol:4317
     sending_queue:
       queue_size: 800
 
+extensions:
+  health_check:
+    endpoint: otel:13133
+  pprof:
+    endpoint: otel:1777
+  zpages:
+    endpoint: otel:55679
+
 service:
+  extensions: [health_check, pprof, zpages]
   pipelines:
     traces:
       receivers: [otlp]
@@ -84,6 +93,3 @@ service:
       receivers: [otlp]
       processors: [memory_limiter, batch, filter, redaction]
       exporters: [logging]
-
-extensions:
-  health_check:
