@@ -1,75 +1,3 @@
-receivers:
-  otlp:
-    protocols:
-      grpc:
-        endpoint: otel:4317
-      http:
-        endpoint: otel:4318
-
-processors:
-  batch:
-    send_batch_size: 10000
-    timeout: 10s
-  memory_limiter:
-    limit_mib: 512
-    spike_limit_mib: 128
-    check_interval: 1s
-  filter:
-    error_mode: ignore
-    traces:
-      span:
-        - attributes["http.request.method"] == nil
-  redaction:
-    allow_all_keys: false
-    allowed_keys:
-      - description
-      - group
-      - id
-      - name
-    ignored_keys:
-      - safe_attribute
-    redact_all_types: true
-    blocked_key_patterns:
-      - '.*token.*'
-      - '.*api_key.*'
-    blocked_values:
-      - '4[0-9]{12}(?:[0-9]{3})?' # Visa card number
-      - '(5[1-5][0-9]{14})' # MasterCard card number
-    allowed_values:
-      - '.+@hireben.dev'
-    hash_function: md5
-    summary: debug
-    url_sanitizer:
-      enabled: true
-      attributes: ['http.url', 'url']
-    db_sanitizer:
-      sql:
-        enabled: true
-        attributes: ['db.statement', 'db.query']
-      redis:
-        enabled: true
-        attributes: ['db.statement', 'redis.command']
-      memcached:
-        enabled: true
-        attributes: ['db.statement', 'memcached.command']
-      mongo:
-        enabled: true
-        attributes: ['db.statement', 'mongodb.query']
-      opensearch:
-        enabled: true
-        attributes: ['db.statement', 'opensearch.body']
-      es:
-        enabled: true
-        attributes: ['db.statement', 'elasticsearch.body']
-
-exporters:
-  logging:
-    loglevel: debug
-  otlp:
-    endpoint: otelcol:4317
-    sending_queue:
-      queue_size: 800
-
 extensions:
   health_check:
     endpoint: otel:13133
@@ -78,18 +6,53 @@ extensions:
   zpages:
     endpoint: otel:55679
 
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: otel:4317
+      http:
+        endpoint: otel:4318
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: otel-collector
+          scrape_interval: 10s
+          static_configs:
+            - targets: [localhost:8888]
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+  probabilistic_sampler:
+    hash_seed: 22
+    sampling_percentage: 15
+  batch:
+    send_batch_size: 8192
+    send_batch_max_size: 0
+    timeout: 10s
+
+exporters:
+  debug:
+    verbosity: basic
+  prometheus:
+    endpoint: otel:8889
+    namespace: default
+
 service:
   extensions: [health_check, pprof, zpages]
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, batch]
-      exporters: [logging]
+      processors: [memory_limiter, probabilistic_sampler, batch]
+      exporters: [debug]
     metrics:
-      receivers: [otlp]
+      receivers: [otlp, prometheus]
       processors: [memory_limiter, batch]
-      exporters: [logging]
+      exporters: [debug, prometheus]
     logs:
       receivers: [otlp]
-      processors: [memory_limiter, batch, filter, redaction]
-      exporters: [logging]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
