@@ -1,0 +1,10 @@
+services:
+  rabbit:
+    image: docker.io/library/rabbitmq:management-alpine
+    restart: unless-stopped
+    networks:
+      - hbnet
+      
+networks:
+  hbnet:
+    external: true
