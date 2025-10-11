@@ -1,0 +1,10 @@
+services:
+  kafka:
+    image: docker.io/apache/kafka:latest
+    restart: unless-stopped
+    networks:
+      - hbnet
+
+networks:
+  hbnet:
+    external: true
