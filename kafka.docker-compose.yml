@@ -27,6 +27,21 @@ services:
       KAFKA_SHARE_COORDINATOR_STATE_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_SHARE_COORDINATOR_STATE_TOPIC_MIN_ISR: 1
       KAFKA_LOG_RETENTION_MINUTES: 10
+
+  kafka-ui:
+    image: ghcr.io/kafbat/kafka-ui:latest
+    restart: unless-stopped
+    depends_on:
+      - kafka
+    networks:
+      - hbnet
+    ports:
+      - '9090:9090'
+    environment:
+      SERVER_PORT: 9090
+      DYNAMIC_CONFIG_ENABLED: 'true'
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
       
 volumes:
   kafka_data:
