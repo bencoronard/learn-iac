@@ -10,8 +10,8 @@ services:
     networks:
       - hbnet
     ports:
-      - '9080:9080'
-      - '9022:9022'
+      - '9080:9080' # GitLab UI
+      - '9022:9022' # GitLab SSH
     environment:
       GITLAB_ROOT_EMAIL: admin@hireben.dev
       GITLAB_ROOT_PASSWORD: P@ssw0rd

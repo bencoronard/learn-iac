@@ -7,8 +7,8 @@ services:
     networks:
       - hbnet
     ports:
-      - '8081:8081'
-      - '8082:8082'
+      - '8081:8081' # Nexus UI
+      - '8082:8082' # Docker repository connector
 
 volumes:
   nexus_data:
