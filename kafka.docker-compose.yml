@@ -43,9 +43,6 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
       
-volumes:
-  kafka_data:
-
 networks:
   hbnet:
     external: true
